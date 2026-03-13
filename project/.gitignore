@@ -1,0 +1,9 @@
+ops/dev.env
+ops/postgres_password
+pgdata/
+reports/
+api/dist/
+frontend/dist/
+__pycache__/
+.venv/
+node_modules/

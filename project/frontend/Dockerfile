@@ -1,3 +1,11 @@
-FROM nginx:alpine
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json* .
+RUN npm install || true # npm ci needs package-lock.json, npm install creates it if missing
+COPY . .
+RUN npm run build
 
-COPY . /usr/share/nginx/html
+FROM nginx:1.27-alpine AS runtime
+COPY --from=builder /app/dist/ /usr/share/nginx/html/
+EXPOSE 80
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://127.0.0.1/health || exit 1

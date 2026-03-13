@@ -1,0 +1,9 @@
+{
+  "name": "todo-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mkdir -p dist && cp index.html script.js dist/ && touch dist/health",
+    "test": "echo 'No tests defined yet' && exit 0"
+
+  }
+}

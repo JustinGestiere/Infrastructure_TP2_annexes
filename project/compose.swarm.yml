@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    env_file: ./ops/dev.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  api:
+    image: todo-api:latest
+    env_file:
+      - ./ops/dev.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://todouser:${POSTGRES_PASSWORD}@db:5432/todo
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 0
+
+  frontend:
+    image: todo-frontend:latest
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+        mode: ingress
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: any
+
+volumes:
+  pgdata:
